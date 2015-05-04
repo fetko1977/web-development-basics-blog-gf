@@ -1,21 +1,24 @@
 <?php
 
 //var_dump(__FILE__) . '<br>';
-define( 'CURRENT_FILE_ROOT_DIR', dirname(__FILE__) . '/');
-define( 'CURRENT_FILE_ROOT_DIR_PATH', basename(dirname(__FILE__)) . '/');
+define( 'ROOT_DIR', dirname(__FILE__) . '/');
+define( 'ROOT_DIR_PATH', basename(dirname(__FILE__)) . '/');
 
-//var_dump(CURRENT_FILE_ROOT_DIR);
+//var_dump(ROOT_DIR);
 //echo '<br>';
-//var_dump(CURRENT_FILE_ROOT_DIR_PATH);
+//var_dump(ROOT_DIR_PATH);
 
 $request = $_SERVER['REQUEST_URI'];
-$request_home = '/' . CURRENT_FILE_ROOT_DIR_PATH;
+$request_home = '/' . ROOT_DIR_PATH;
 
 $controller = 'master';
 $method = 'index';
 $params = array();
 
-include_once 'controllers/Master.php';
+include_once 'config/db.php';
+include_once 'lib/database.php';
+include_once 'controllers/master.php';
+include_once 'models/master.php';
 
 if ( !empty($request) ) {
     if (strpos($request, $request_home) === 0) {
@@ -50,3 +53,11 @@ $instance = new $controller_class;
 if ( method_exists( $instance, $method ) ) {
     call_user_func_array( array( $instance, $method ), array( $params ) );
 }
+
+// Get the db object.
+$db_object = \Lib\Database::get_instance();
+
+//Get the db here
+$db_connection = $db_object::get_db();
+
+//var_dump($db_connection);
