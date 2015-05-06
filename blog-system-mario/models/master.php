@@ -4,59 +4,94 @@ namespace Models;
 class Master_Model {
     
     protected $table;
+    protected $columns;
+    protected $inner_join_table;
+    protected $condition;
+    protected $where;
     protected $limit;
     protected $db;
     
     public function __construct( $args = array() ) {
-        $defaults = array(
-            'limit' => 0
-        );
-        
-        $args = array_merge( $defaults, $args );
-        
-        if ( ! isset( $args ['table']) ) {
-            die( 'Table not defined.' );
-        }
-        
-        extract( $args );
-        
-        $this->table = $table;
-        $this->limit = $limit;
-        
-        $db_object = \Lib\Database::get_instance();
-        
-        $this->db = $db_object::get_db();
+		$args = array_merge( array(
+                        'inner_join_table' => '',
+                        'condition' => '',
+			'where' => '',
+			'columns' => '*',
+			'limit' => 0
+		), $args );
+		
+		if ( ! isset( $args['table'] ) ) {
+			die( 'Table not defined. Please define a model table.' );
+		}
+		
+		extract( $args );
+		
+                $this->table = $table;
+                $this->columns = $columns;
+                $this->inner_join_table = $inner_join_table;
+                $this->condition = $condition;
+		$this->where = $where;
+		$this->limit = $limit;
+		
+		$db = \Lib\Database::get_instance();
+		$this->db = $db::get_db();
     }
     
-    public function find( $args = array() ){
-        $defaults = array(
-            'table' => $this->table,
-            'limit' => $this->limit,
-            'where' => '',
-            'columns' => '*'
-        );
+    public function find( $args = array() ) {
+		$args = array_merge( array(
+			'table' => $this->table,
+                        'inner_join_table' => '',
+                        'condition' => '',
+			'where' => '',
+			'columns' => '*',
+			'limit' => 0
+		), $args );
         
-        $args = array_merge( $defaults, $args );
-        
-        extract( $args );
-        
-        $query = "SELECT {$columns} FROM {$table}";
-        
-        if ( !empty( $where )) {
-            $query .= " WHERE $where";
-        }
-        
-        if ( !empty( $limit )) {
-            $query .= " LIMIT $limit";
-        }
-        
-        $result_set = $this->db->query( $query );
-        
-        $results = $this->process_results($result_set);
-        
-        return $results;
+		extract( $args );
+                
+		$query = "select {$columns} from {$table}";
+		
+                if( ! empty( $inner_join_table ) && !empty( $condition )) {
+			$query .= ' INNER JOIN ' . $inner_join_table . ' ON ' .
+                        $condition;
+		}
+                
+                
+                
+		if( ! empty( $where ) ) {
+			$query .= ' where ' . $where;
+		}
+		
+		if( ! empty( $limit ) ) {
+			$query .= ' limit ' . $limit;
+		}
+
+		//var_dump($query);
+		$result_set = $this->db->query( $query );
+		
+		$results = $this->process_results( $result_set );
+		
+		return $results;
     }
     
+    public function get_by_id( $id ) {
+        return $this->find( array ( 'where' => 'id = ' . $id));
+    }
+    
+    public function get_post_by_title( $title ) {
+        return $this->find( array ( 'where' => "title = '" . $title . "'" ));
+    }
+    
+    public function get_user_by_id( $id ) {
+        $user = $this->find( array(
+            'table' => 'users',
+            'where' => 'id = ' . $id
+        ));
+        
+        return $user;
+    }
+
+
     protected function process_results( $result_set ){
         $results = array();
         
@@ -65,5 +100,7 @@ class Master_Model {
                 $results[] = $row;
             }
         }
+        
+        return $results;
     }
 }

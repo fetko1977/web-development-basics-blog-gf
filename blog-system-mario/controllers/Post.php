@@ -9,7 +9,16 @@ class Post_Controller extends Master_Controller {
     }
     
     public function index(){
+        $posts = $this->model->get_posts_with_author();
+        
         $template_name = ROOT_DIR . $this->views_dir . 'index.php';
-        include_once $this->layout;
+        include_once ROOT_DIR . '/views/layout/' . $this->layout;
+    }
+    
+    public function view( $id ){
+        $post = $this->model->get_posts_by_id( $id );
+        
+        $template_name = ROOT_DIR . $this->views_dir . 'single-post.php';
+        include_once ROOT_DIR . '/views/layout/' . $this->layout;
     }
 }

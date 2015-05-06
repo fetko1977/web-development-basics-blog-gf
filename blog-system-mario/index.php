@@ -1,63 +1,64 @@
 <?php
 
-//var_dump(__FILE__) . '<br>';
-define( 'ROOT_DIR', dirname(__FILE__) . '/');
-define( 'ROOT_DIR_PATH', basename(dirname(__FILE__)) . '/');
+// Define root dir and root path
+define( 'DS', '/' );
+define( 'ROOT_DIR', dirname( __FILE__ ) . DS );
+define( 'ROOT_PATH', basename( dirname( __FILE__ ) ) . DS );
+define( 'ROOT_URL', 'http://' . $_SERVER['HTTP_HOST'] . DS . ROOT_PATH);
+//var_dump(ROOT_URL);
+//include 'config/bootstrap.php';
 
-//var_dump(ROOT_DIR);
-//echo '<br>';
-//var_dump(ROOT_DIR_PATH);
+$request_home = DS . ROOT_PATH;
 
 $request = $_SERVER['REQUEST_URI'];
-$request_home = '/' . ROOT_DIR_PATH;
-
-$controller = 'master';
+$components = array();
+$controller = 'Master';
 $method = 'index';
-$params = array();
-
+$admin_routing = false;
+$param = array();
 include_once 'config/db.php';
 include_once 'lib/database.php';
-include_once 'controllers/master.php';
-include_once 'models/master.php';
+include_once 'lib/auth.php';
+include_once 'controllers/master_controller.php';
+$master_controller = new \Controllers\Master_Controller();
 
-if ( !empty($request) ) {
-    if (strpos($request, $request_home) === 0) {
-        $request = substr($request, strlen($request_home));
-//        var_dump($request);
-        
-        $request_uri_components = explode('/', $request, 3);
-        
-        if ( count( $request_uri_components ) > 1) {
-            list( $controller, $method ) = $request_uri_components;
-            
-            if ( isset( $request_uri_components[2] ) ) {
-                $params = $request_uri_components[2];
-            }
-            
-            include_once 'controllers/' . $controller . '.php';
-        }
-    }
+if ( ! empty( $request ) ) {
+	if( 0 === strpos( $request, $request_home ) ) {
+                
+		$request = substr( $request, strlen( $request_home ) );
+		
+		if( 0 === strpos( $request, 'admin' ) ) {
+			$admin_routing = true;
+			include_once 'controllers/admin/admin.php';
+			$request = substr( $request, strlen( 'admin/' ) );
+		}
+		
+		$components = explode( DS, $request, 3 );
+                //var_dump($components);
+		if ( 1 < count( $components ) ) {
+			list( $controller, $method ) = $components;
+			
+			$param = isset( $components[2] ) ? $components[2] : array();
+		}
+	}
 }
-
 //var_dump($controller);
 //var_dump($method);
-//var_dump($params);
-
-//Set our requested $controller class
-$controller_class = '\Controllers\\' . ucfirst( $controller ) . '_Controller';
-
-//Make an instance from our requested $controller class
-$instance = new $controller_class;
-
-//We check if requested method exists in the current instance of current requested $controller class
-if ( method_exists( $instance, $method ) ) {
-    call_user_func_array( array( $instance, $method ), array( $params ) );
+$admin_folder = $admin_routing ? 'admin/' : '';
+if ( isset( $controller ) && file_exists( 'controllers/' . $admin_folder . $controller . '.php' ) ) {
+    //echo $controller;
+	$admin_folder = $admin_routing ? 'admin/' : '';
+	include_once 'controllers/' . $admin_folder . $controller . '.php';
+	$admin_namespace = $admin_routing ? '\Admin' : '';
+	
+	$controller_class = $admin_namespace . '\Controllers\\' . ucfirst( $controller ) . '_Controller';
+	$instance = new $controller_class();
+	
+	if( method_exists( $instance, $method ) ) {
+		call_user_func_array( array( $instance, $method ), array( $param ) );
+	} else {
+		call_user_func_array( array( $instance, 'index' ), array() );
+	}
+} else {
+	$master_controller->index();
 }
-
-// Get the db object.
-$db_object = \Lib\Database::get_instance();
-
-//Get the db here
-$db_connection = $db_object::get_db();
-
-//var_dump($db_connection);
