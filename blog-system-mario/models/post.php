@@ -8,9 +8,9 @@ class Post_Model extends Master_Model {
         parent::__construct( array( 'table' => 'posts') );
     }
     
-    public function get_posts_with_author() {
+    public function get_posts() {
         $args = array(
-            'columns' => 'posts.title, posts.content, posts.date, users.firstname, users.lastname',
+            'columns' => 'posts.id, posts.title, posts.content, posts.date, users.firstname, users.lastname',
             'inner_join_table' => 'users',
             'condition' => 'posts.id=users.id'
         );
@@ -18,7 +18,19 @@ class Post_Model extends Master_Model {
         return parent::find( $args );
     }
     
-    public function get_posts_by_id( $post_id ) {
+    public function get_posts_comments_by_id( $id ){
+        $args = array(
+            'table' => 'comments',
+            'columns' => 'comments.content, comments.date, users.firstname, users.lastname',
+            'inner_join_table' => 'users',
+            'condition' => 'comments.User_id = users.id ',
+            'where' => 'comments.Post_id = ' . $id
+    );
+        
+        return parent::find( $args );
+    }
+
+        public function get_posts_by_id( $post_id ) {
         $args = array(
             'columns' => 'posts.title, posts.content, posts.date, users.firstname, users.lastname',
             'inner_join_table' => 'users',
