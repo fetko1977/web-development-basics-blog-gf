@@ -23,15 +23,17 @@
         </div>
         <div class="navbar-collapse collapse" id="navbar-main">
             <ul class="nav navbar-nav">
-                <li><a href="<?php echo ROOT_URL; ?>post/index">Posts</a></li>
                 <?php 
                     if ( empty( $this->logged_user )) {
                 ?>
+                <li><a href="<?php echo ROOT_URL; ?>post/index">Posts</a></li>
                 <li><a href="<?php echo ROOT_URL; ?>login/index">Login</a></li>
                 <li><a href="<?php echo ROOT_URL; ?>register/index">Register</a></li>
                 <?php    
                     } else {
                 ?>
+                <li><a href="<?php echo ROOT_URL; ?>admin/post/index">Posts</a></li>
+                <li><a href="<?php echo ROOT_URL; ?>admin/post/add">Add New Post</a></li>
                 <li><a href="<?php echo ROOT_URL; ?>login/logout/">Logout</a></li>
                 <?php
                     }

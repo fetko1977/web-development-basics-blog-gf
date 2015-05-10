@@ -5,8 +5,8 @@ namespace Admin\Controllers;
 class Admin_Controller extends \Controllers\Master_Controller {
     protected $auth;
     
-    public function __construct() {
-		parent::__construct( get_class(), 'master', '/views/admin/' );
+    public function __construct($class_name = '\Controllers\Master_Controller', $model = 'master', $views_dir = '/views/admin/') {
+		parent::__construct( get_class(), $model, $views_dir );
 		$auth = \Lib\Auth::get_instance();
                 $this->auth = $auth;
 		

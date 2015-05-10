@@ -25,7 +25,7 @@ class Register_Controller extends Master_Controller {
             
             $db_username_value = $this->model->get_user_by_username( $username );
             
-            if ($username !== $db_username_value) {
+            if ($username != $db_username_value) {
                 $this->_is_unique_register_username = true;
             }
             
@@ -37,7 +37,7 @@ class Register_Controller extends Master_Controller {
                 );
             
             
-            if($password !== $password_again){
+            if($password != $password_again){
                 echo "<div class='container' style='text-align: center;'><p>Password must be the same!</p></div>";
             } else if( $this->_is_unique_register_username == false ) {
                 echo "<div class='container' style='text-align: center;'><p>Username already exists in the database!</p></div>";

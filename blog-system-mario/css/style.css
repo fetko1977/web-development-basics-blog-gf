@@ -12,6 +12,10 @@ div.navbar {
     background: orange;
 }
 
+.navbar-default .navbar-nav>li>a {
+    color: #fff;
+}
+
 /*-----------------------------
     Posts
 -----------------------------*/
@@ -30,10 +34,10 @@ div.container div {
     padding: 0;
 }
 
-div.comments-wraper div.comment-item-header p {
+div.comments-wraper div.comment-item-header p, p.comment-label {
     background: red;
     color: #fff;
-    padding: 5px 0;
+    padding: 5px 0 5px 5px;
 }
 
 div.comments-wraper div.comment-item-header div:first-child p {
@@ -50,6 +54,8 @@ div.comment-item {
     border-bottom: solid 1px #fff;
     margin: 15px 0;
 }
+
+
 
 /*-----------------------------
     Tags

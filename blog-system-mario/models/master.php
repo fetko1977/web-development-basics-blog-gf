@@ -1,6 +1,7 @@
 <?php
 
 namespace Models;
+
 class Master_Model {
     protected $table;
     protected $columns;
@@ -117,7 +118,7 @@ class Master_Model {
     }
    
     
-    public function add( $element ) {
+    public function add( $table, $element ) {
         $keys = array_keys( $element );
         $values = array();
         
@@ -129,12 +130,31 @@ class Master_Model {
         $values = implode( $values, ',' );
         
         
-        $query = "INSERT INTO {$this->table}($keys) values($values)";
-        
+        $query = "INSERT INTO {$table}($keys) values($values)";
+        //var_dump($query); exit();
         $this->db->query( $query );
         
 	return $this->db->affected_rows;
     }
+    
+    public function update( $model ) {
+		$query = "UPDATE " . $this->table . " SET ";
+		//var_dump($model); exit();
+		foreach( $model as $key => $value ) {
+                    if( $key === 'id' ) {
+                        continue;
+                    }
+                    $query .= "$key = '" . $this->db->real_escape_string( $value ) . "',"; 
+		}
+		$query = rtrim( $query, "," );
+                //var_dump($query); exit();
+		$query .= " WHERE id = " . $model['id'];
+                
+                
+		$this->db->query( $query );
+		
+		return $this->db->affected_rows;
+	}
 
 
     public function get_all_tags(){
