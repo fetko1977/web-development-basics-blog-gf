@@ -1,12 +1,12 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
 
 // Define root dir and root path
 define( 'DS', '/' );
 define( 'ROOT_DIR', dirname( __FILE__ ) . DS );
 define( 'ROOT_PATH', basename( dirname( __FILE__ ) ) . DS );
 define( 'ROOT_URL', 'http://' . $_SERVER['HTTP_HOST'] . DS . ROOT_PATH);
-//var_dump(ROOT_URL);
-//include 'config/bootstrap.php';
+//var_dump($_SERVER['HTTP_HOST']);
 
 $request_home = DS . ROOT_PATH;
 
@@ -16,6 +16,7 @@ $controller = 'Master';
 $method = 'index';
 $admin_routing = false;
 $param = array();
+
 include_once 'config/db.php';
 include_once 'lib/database.php';
 include_once 'lib/auth.php';

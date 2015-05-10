@@ -2,11 +2,11 @@
 
 namespace Models;
 class Master_Model {
-    
     protected $table;
     protected $columns;
     protected $inner_join_table;
     protected $condition;
+    protected $order;
     protected $where;
     protected $limit;
     protected $db;
@@ -15,6 +15,7 @@ class Master_Model {
 		$args = array_merge( array(
                         'inner_join_table' => '',
                         'condition' => '',
+                        'order' => '',
 			'where' => '',
 			'columns' => '*',
 			'limit' => 0
@@ -30,6 +31,7 @@ class Master_Model {
                 $this->columns = $columns;
                 $this->inner_join_table = $inner_join_table;
                 $this->condition = $condition;
+                $this->order = $order;
 		$this->where = $where;
 		$this->limit = $limit;
 		
@@ -42,6 +44,7 @@ class Master_Model {
 			'table' => $this->table,
                         'inner_join_table' => '',
                         'condition' => '',
+                        'order' => '',
 			'where' => '',
 			'columns' => '*',
 			'limit' => 0
@@ -56,13 +59,15 @@ class Master_Model {
                         $condition;
 		}
                 
-                
-                
-		if( ! empty( $where ) ) {
+                if( ! empty( $where ) ) {
 			$query .= ' where ' . $where;
 		}
-		
-		if( ! empty( $limit ) ) {
+                
+                if( ! empty( $order ) ) {
+			$query .= ' order by ' . $order;
+		}
+                
+                if( ! empty( $limit ) ) {
 			$query .= ' limit ' . $limit;
 		}
 
@@ -78,7 +83,7 @@ class Master_Model {
         return $this->find( array ( 'where' => 'id = ' . $id));
     }
     
-    public function get_post_by_title( $title ) {
+    public function get_by_title( $title ) {
         return $this->find( array ( 'where' => "title = '" . $title . "'" ));
     }
     
@@ -88,19 +93,86 @@ class Master_Model {
             'where' => 'id = ' . $id
         ));
         
-        return $user;
+        return $user[0];
+    }
+    
+    public function get_comments_by_post_id( $post_id ) {
+        $comments = $this->find( array(
+            'table' => 'comments',
+            'where' => 'Post_id = ' . $post_id,
+            'order' => ' date desc '
+        ));
+        
+        return $comments;
+    }
+    
+    public function get_user_by_username( $username ) {
+        $username_value = $this->find( array(
+            'table' => 'users',
+            'columns' => 'username',
+            'where' => 'username = ' . $username
+        ));
+        
+        return $username_value;
+    }
+   
+    
+    public function add( $element ) {
+        $keys = array_keys( $element );
+        $values = array();
+        
+        foreach ( $element as $key => $value ){
+            $values[] = "'" . $this->db->real_escape_string( $value ) . "'"; 
+        }
+        
+        $keys = implode( $keys, ',' );
+        $values = implode( $values, ',' );
+        
+        
+        $query = "INSERT INTO {$this->table}($keys) values($values)";
+        
+        $this->db->query( $query );
+        
+	return $this->db->affected_rows;
     }
 
 
+    public function get_all_tags(){
+        $tags = $this->find(array(
+            'table' => 'tags'
+        ));
+        return $tags;
+    }
+    
+    public function get_last_post(){
+        $last_post = $this->find( array(
+            'table' => 'posts',
+            'order' => ' date desc ',
+            'limit' => 1
+        ));
+        
+        return $last_post;
+    }
+    
+    public function get_all_post_titles(){
+        $posts_titles = $this->find( array(
+            'table' => 'posts',
+            'columns' => ' id, title ',
+            'order' => ' date desc '
+        ));
+        
+        return $posts_titles;
+    }
+
     protected function process_results( $result_set ){
         $results = array();
-        
+
         if ( !empty( $result_set ) && $result_set->num_rows > 0 ) {
             while ( $row = $result_set->fetch_assoc() ){
                 $results[] = $row;
             }
         }
-        
+
         return $results;
     }
 }

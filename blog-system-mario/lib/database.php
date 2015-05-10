@@ -14,6 +14,10 @@ class Database {
         
         $db = new \mysqli($host, $username, $password, $dbname);
         
+        if($db->connect_error) {
+            die("$db->connect_errno: $db->connect_error");
+        }
+        
         self::$_db = $db;
     }
     

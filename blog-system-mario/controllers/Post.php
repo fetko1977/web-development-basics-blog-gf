@@ -9,7 +9,7 @@ class Post_Controller extends Master_Controller {
     }
     
     public function index(){
-        $posts = $this->model->get_posts();
+        $posts = $this->model->get_all_posts_with_authors();
         
         $template_name = ROOT_DIR . $this->views_dir . 'index.php';
         include_once ROOT_DIR . '/views/layout/' . $this->layout;

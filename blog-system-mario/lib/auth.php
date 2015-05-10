@@ -37,26 +37,63 @@ class Auth {
         return self::$_logged_user;
     }
     
-    public function login( $username, $password ){
+    public function register( $user ){
         $db_object = \Lib\Database::get_instance();
         $db = $db_object->get_db();
         
-        $statement = $db->prepare("SELECT id FROM users WHERE username = ? AND password = MD5( ? ) LIMIT 1");
+        $keys = array_keys( $user );
+        $values = array();
         
-        $statement->bind_param( 'ss', $username, $password );
-		
-        $statement->execute();
-		
-        $result_set = $statement->get_result();
-		
-        if ( $row = $result_set->fetch_assoc() ) {
-            $_SESSION['username'] = $username;
-            $_SESSION['user_id'] = $row['id'];
-            
-            return true;
+        foreach ( $user as $key => $value ){
+            if($key === 'password'){
+                $value = md5($value);
+            }
+            $values[] = "'" . $db->real_escape_string( $value ) . "'"; 
         }
         
-        return false;
+        $keys = implode( $keys, ', ' );
+        $values = implode( $values, ', ' );
+        
+        $query = "INSERT INTO users ($keys) values($values)";
+        
+        if(!$statement = $db->prepare($query)){
+            print "Failed to prepare statement\n";
+        } else {
+            $statement->execute();
+            
+            $db->query( $query );
+        
+            return $db->affected_rows;
+        }
+    }
+
+
+    public function login( $username, $password ){
+        $db = \Lib\Database::get_instance();
+        $dbconn = $db->get_db();
+		
+		
+        $statement = $dbconn->prepare( "SELECT id FROM users WHERE username = ? AND password = MD5( ? ) LIMIT 1" );
+        
+        $statement->bind_param( 'ss', $username, $password );
+
+        $statement->execute();
+        
+        $statement->bind_result( $id );
+        
+        
+        while ($statement->fetch()){
+            $_SESSION['username'] = $username;
+            $_SESSION['user_id'] = $id;
+        }
+            
+        if( $_SESSION['username'] == null ||  $_SESSION['user_id'] == null) {
+            return false;
+        } else {
+            return true;
+        }    
+
+        
     }
     
     public function logout(){

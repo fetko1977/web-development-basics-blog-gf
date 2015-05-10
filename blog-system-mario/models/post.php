@@ -8,11 +8,12 @@ class Post_Model extends Master_Model {
         parent::__construct( array( 'table' => 'posts') );
     }
     
-    public function get_posts() {
+    public function get_all_posts_with_authors() {
         $args = array(
             'columns' => 'posts.id, posts.title, posts.content, posts.date, users.firstname, users.lastname',
             'inner_join_table' => 'users',
-            'condition' => 'posts.id=users.id'
+            'condition' => 'posts.User_id=users.id',
+            'order' => ' date desc '
         );
         
         return parent::find( $args );
@@ -21,9 +22,7 @@ class Post_Model extends Master_Model {
     public function get_posts_comments_by_id( $id ){
         $args = array(
             'table' => 'comments',
-            'columns' => 'comments.content, comments.date, users.firstname, users.lastname',
-            'inner_join_table' => 'users',
-            'condition' => 'comments.User_id = users.id ',
+            'columns' => 'comments.content, comments.date, comments.firstname, comments.lastname',
             'where' => 'comments.Post_id = ' . $id
     );
         
@@ -34,7 +33,7 @@ class Post_Model extends Master_Model {
         $args = array(
             'columns' => 'posts.title, posts.content, posts.date, users.firstname, users.lastname',
             'inner_join_table' => 'users',
-            'condition' => 'posts.id=users.id AND posts.id = ' . $post_id
+            'condition' => 'posts.User_id=users.id AND posts.id = ' . $post_id
         );
         
         return parent::find( $args );

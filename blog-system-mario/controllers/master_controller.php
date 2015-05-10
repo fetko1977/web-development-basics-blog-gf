@@ -8,7 +8,8 @@ class Master_Controller {
 	protected $model = null;
 	protected $class_name = null;
 	protected $logged_user = array();
-	public function __construct( $class_name = '\Controllers\Master_Controller', $model = 'master', $views_dir = '/views/master/' ) {
+        protected $is_logged_in;
+        public function __construct( $class_name = '\Controllers\Master_Controller', $model = 'master', $views_dir = '/views/master/' ) {
 		
 		$this->class_name = $class_name;
 		
@@ -20,8 +21,11 @@ class Master_Controller {
 		
 		$this->model = new $model_class( array( 'table' => 'none' ) );
 		
-		$logged_user = \Lib\Auth::get_instance()->get_logged_user();
+                $auth = \Lib\Auth::get_instance();
+                
+		$logged_user = $auth->get_logged_user();
 		$this->logged_user = $logged_user;
+                $this->is_logged_in = $auth->is_logged_in();
 	}
 	
 	public function index() {
