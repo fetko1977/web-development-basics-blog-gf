@@ -5,11 +5,11 @@
             <form role="form" method="POST">
                 <div class="form-group">
                     <label for="title">Title:</label>
-                    <input type="text" class="form-control" name="title" value="<?php echo $post['title']; ?>">
+                    <input type="text" class="form-control" name="title" value="<?php echo addslashes($post['title']); ?>">
                 </div>
                 <div class="form-group">
                     <label for="content">Content:</label>
-                    <textarea class="form-control" name="content"><?php echo $post['content']; ?></textarea>
+                    <textarea class="form-control" name="content"><?php echo addslashes($post['content']); ?></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-default">Submit</button>

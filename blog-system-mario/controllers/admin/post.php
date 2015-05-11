@@ -19,6 +19,7 @@ class Post_Controller extends \Admin\Controllers\Admin_Controller {
     
     public function view( $id ){
         $post = $this->model->get_posts_by_id( $id );
+        $post_comments = $this->model->get_posts_comments_by_id( $id );
         
         $template_name = ROOT_DIR . $this->views_dir . 'single-post.php';
         include_once ROOT_DIR . '/views/layout/' . $this->layout;
@@ -39,7 +40,7 @@ class Post_Controller extends \Admin\Controllers\Admin_Controller {
             );
             
             if($this->model->add_new_post( $post ) > 0){
-                echo "<p style='text-align: center;'>Your post is added!</p>";
+                header( 'Location: ' . ROOT_URL . 'admin/post/index/');
             } else {
                 echo "<p style='text-align: center;'>Your post was not added!</p>";
             }
@@ -75,6 +76,18 @@ class Post_Controller extends \Admin\Controllers\Admin_Controller {
             
         }
         $template_name = ROOT_DIR . $this->views_dir . 'edit-post.php';
+        include_once ROOT_DIR . '/views/layout/' . $this->layout;
+    }
+    
+    public function delete ( $id ){
+        
+        if($this->model->delete_post( $id ) > 0){
+            header( 'Location: ' . ROOT_URL . 'admin/post/index/');
+        } else {
+            echo "<p style='text-align: center;'>Your post was not delted!</p>";
+        }
+        
+        $template_name = ROOT_DIR . $this->views_dir . 'single-post.php';
         include_once ROOT_DIR . '/views/layout/' . $this->layout;
     }
 }

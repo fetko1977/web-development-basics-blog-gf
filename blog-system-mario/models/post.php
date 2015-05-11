@@ -22,7 +22,7 @@ class Post_Model extends Master_Model {
     public function get_posts_comments_by_id( $id ){
         $args = array(
             'table' => 'comments',
-            'columns' => 'comments.content, comments.date, comments.firstname, comments.lastname',
+            'columns' => 'comments.id, comments.content, comments.date, comments.firstname, comments.lastname',
             'where' => 'comments.Post_id = ' . $id,
             'order' => ' date desc '
         );
@@ -38,6 +38,36 @@ class Post_Model extends Master_Model {
         );
 
         return parent::find( $args );
+    }
+    
+    public function get_posts_visits_count( $id ) {
+        $post_visits = $args = array(
+            'table' => 'posts_visits',
+            'columns' => 'visits',
+            'where' => 'Post_id = ' . $id
+        );
+        
+        return parent::find($post_visits);
+    }
+    
+    public function update_counter( $counter_object ) {
+        $query = "UPDATE posts_visits SET ";
+        //var_dump($model); exit();
+        foreach( $counter_object as $key => $value ) {
+            if( $key === 'id' ) {
+                continue;
+            }
+            $query .= "$key = '" . $this->db->real_escape_string( $value ) . "',"; 
+        }
+        //UPDATE posts_visits SET visits = `2` WHERE posts_visits.Post_id = 1
+        $query = rtrim( $query, "," );
+        
+        $query .= " WHERE Post_id = " . $counter_object['id'];
+        //var_dump($query); exit();
+
+        $this->db->query( $query );
+
+        return $this->db->affected_rows;
     }
     
     public function get_posts_by_current_user( $user_id ) {
@@ -61,6 +91,10 @@ class Post_Model extends Master_Model {
     
     public function edit_post( $post ) {
         return parent::update( $post );
+    }
+    
+    public function delete_post( $id ) {
+        return parent::delete( $id );
     }
 }
 

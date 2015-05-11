@@ -3,7 +3,6 @@
 namespace Controllers;
 
 class Post_Controller extends Master_Controller {
-    protected $posts_views_counter = 0;
     public function __construct() {
         parent::__construct( get_class(), 'post', '/views/post/' );
     }
@@ -16,8 +15,16 @@ class Post_Controller extends Master_Controller {
     
     public function view( $id ){
         $post = $this->model->get_posts_by_id( $id );
-        $this->posts_views_counter ++;
-        //$counter = $this->posts_views_counter;
+        $counter = intval($this->model->get_posts_visits_count( $id )[0]['visits']);
+        //var_dump($counter);
+        
+        $counter_object = array(
+            'id' => $id,
+            'visits' => $counter + 1
+        );
+        
+        $this->model->update_counter($counter_object);
+        
         $post_comments = $this->model->get_posts_comments_by_id( $id );
         
         //Comment submit here

@@ -138,23 +138,36 @@ class Master_Model {
     }
     
     public function update( $model ) {
-		$query = "UPDATE " . $this->table . " SET ";
-		//var_dump($model); exit();
-		foreach( $model as $key => $value ) {
-                    if( $key === 'id' ) {
-                        continue;
-                    }
-                    $query .= "$key = '" . $this->db->real_escape_string( $value ) . "',"; 
-		}
-		$query = rtrim( $query, "," );
-                //var_dump($query); exit();
-		$query .= " WHERE id = " . $model['id'];
-                
-                
-		$this->db->query( $query );
-		
-		return $this->db->affected_rows;
-	}
+        $query = "UPDATE " . $this->table . " SET ";
+        //var_dump($model); exit();
+        foreach( $model as $key => $value ) {
+            if( $key === 'id' ) {
+                continue;
+            }
+            $query .= "$key = '" . $this->db->real_escape_string( $value ) . "',"; 
+        }
+        $query = rtrim( $query, "," );
+        //var_dump($query); exit();
+        $query .= " WHERE id = " . $model['id'];
+
+
+        $this->db->query( $query );
+
+        return $this->db->affected_rows;
+    }
+    
+//    public function update_by_id( $id ){
+//        
+//    }
+
+
+    public function delete( $id ) {
+            $query = "DELETE FROM {$this->table} WHERE id=" . intval( $id );
+            //var_dump($query); exit();
+            $this->db->query( $query );
+
+            return $this->db->affected_rows;
+    }
 
 
     public function get_all_tags(){

@@ -1,6 +1,7 @@
 <div class="row">
     <div class="container">
 <?php
+//var_dump($counter); exit();
 foreach ($post as $selected_post) {
 ?>
         <h1 class="post-title"><?php echo $selected_post['title']; ?></h1>

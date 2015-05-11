@@ -43,8 +43,12 @@
       </div>
     </div>
       <div class="container">
+          <?php if($this->is_logged_in) { ?>
           <div class="current-user-bar">
-              <?php echo $this->is_logged_in ? 'Logged in as: ' . $this->logged_user['username'] : ''; ?>
+              <p><?php echo 'Logged in as: ' . $this->logged_user['username']; ?></p>
           </div>
+          <?php 
+          }
+          ?>
       </div>
 

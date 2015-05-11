@@ -16,6 +16,12 @@ div.navbar {
     color: #fff;
 }
 
+.current-user-bar p {
+    background: rgb(20, 125, 255);
+    color: #fff;
+    padding: 10px;
+}
+
 /*-----------------------------
     Posts
 -----------------------------*/
@@ -55,7 +61,16 @@ div.comment-item {
     margin: 15px 0;
 }
 
+div.comment-item-content {
+    border-bottom: solid 1px #fff;
+}
+div.comment-item-content p {
+    padding: 10px 0;
+}
 
+div.comment-item-footer a {
+    margin: 10px 0;
+}
 
 /*-----------------------------
     Tags
